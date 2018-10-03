@@ -24,7 +24,7 @@ separate blocks, in those scenarios, we can use the line counts to determine the
 location and read distance are found, we can perform a read and count to the requested line.
 
 On my first iteration of the project, I was using a percentage of the file for block size rather than the square root. I liked this solution since it would allow for a constant amount of memory to be used when storing the indexes, and each block's
-read time would only be a small percent of the total size. Of course, the block scan time would still grow linearly with this size of the file. I figured this wouldn't be a big deal since I would use a very small percent, and I could always tweak the configuration. Unfortunately, the scan
+read time would only be a small percent of the total size. Of course, the block scan time would still grow linearly with the size of the file. I figured this wouldn't be a big deal since I would use a very small percent, and I could always tweak the configuration. Unfortunately, the scan
 time grew too fast as the files grew larger. 
 
 I then decided to sacrafice some memory in return for faster lookups. By using the square root of the file size, we could ensure the
