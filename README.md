@@ -7,7 +7,7 @@ The system is comprised of two main parts. The first is the module `LineServer.L
 on startup. The parser breaks down the file into a series of blocks, each block's size is equal to the square root of the
 total file size. Each text block is then scanned to determine how many lines appear within that block. Each block and it's line count
 are used as indexes and are kept in a linked list. To use an example, imagine a file that is 25 bytes in size, and every 5 bytes
-in the file contains 8 lines. The resulting indexes are stored as a linked list, where each node contains the block number, and
+of the file contains 8 lines. The resulting indexes are stored as a linked list, where each node contains the block number, and
 the amount of lines seen up to that point. The resulting list would appear as: 
 ```
 [{0, 8}, {1, 16}, {2, 24}, {3, 32}, {4, 40}]
@@ -18,8 +18,8 @@ These indexes are then stored in a separate process called an Agent.
 An Agent is an Elixir process that is capable of storing state. The module `LineServer.LineAgent` is the second part of the system,
 and is responsible for storing the indexes, and retrieving the desired line. When a request comes in, the agent is able to use
 the indexes to determine where in the file it must look. Using the example from above, let's say we wanted to find the 30th line.
-Using the indexes, we see that the block 3 is the first node with a number count higher than 30. This means the 30th line must be 
-inside that block. Block size is 5 bytes, so we can start looking at the 15th byte. It is possible for a line to be spread across 
+Using the indexes, we see that block 3 is the first node with a number count higher than 30. This means the 30th line must be 
+inside that block. Block size is 5 bytes, so we will start looking at the 15th byte. It is possible for a line to be spread across 
 separate blocks, in those scenarios, we can use the line counts to determine the maximum amount of space we need to read. Once the
 location and read distance are found, we can perform a read and count to the requested line.
 
@@ -44,7 +44,7 @@ The inital linear scan through the file however, would take a very long time.
 ### How will your system perform with 100 users? 10000 users? 1000000 users?
 The Agent processes are not known to do very well with concurrency. Since it is a single process, it can only perform one lookup at 
 a time. Since the lookup time is rather quick, this shouldn't be too much of a problem, but steps could be taken to allow for better
-concurrency. We could use a ETS table for storing the indexes. This is an in-memory data table which allows for quick
+concurrency. We could use an ETS table for storing the indexes. This is an in-memory data table which allows for quick
 concurrent reads. We could also explore options to read the file in separate concurrent processes, as it is read-only.
 
 ### What documentation, websites, papers, etc did you consult in doing this assignment?
@@ -55,14 +55,14 @@ concurrent reads. We could also explore options to read the file in separate con
 
 ### What third-party libraries or other tools does the system use? How did you choose each library or framework you used?
 I decided to use Elixir and the Phoenix web framework for this project. Elixir is a great language for writing functional
-code, and is typically great for concurrency and robust systems. I chose Phoenix because I am very familiar with it.
-It may have been heavier than what was needed for this project. A light-weight REST framework
+code, and is typically great for concurrency and robust systems. I chose Phoenix because I am very familiar with it, although
+it may have been heavier than what was needed for this project. A light-weight REST framework
 like [maru](https://github.com/elixir-maru/maru) would have worked fine as well.
 
 ### How long did you spend on this exercise? If you had unlimited more time to spend on this, how would you spend it and how would you prioritize each item?
 
-I spent roughly 5 hours on the exercise. If I had unlimited time, the first thing I would do is strive for complete test coverage. There are a few unit tests, but this would benefit from more integration tests. I would work on allowing for better concurrency. As stated above, an
-ETS table and multiple file reading processes may allow for more concurrent users. I would also like to spend more time on the index data structure I chose. A linked list was my first thought because the lookup reminded me of how a set operates. I would like to reasearch more data structures used by databases, and see if that could be beneficial in terms of memory or lookup time.
+I spent roughly 5 hours on the exercise. If I had unlimited time, the first thing I would do is strive for complete test coverage. There are a few unit tests, but the project would benefit from more integration tests. I would then work on allowing for better concurrency. As stated above, an
+ETS table and multiple file reading processes may allow for more concurrent users. I would also like to spend more time on the index data structure I chose. A linked list was my first thought because the lookup reminded me of how a set is implemented. I would like to reasearch more data structures used by databases, and see if that could be beneficial in terms of memory or lookup time.
 
 ### If you were to critique your code, what would you have to say about it?
 My first critique would be of the data structure holding the indexes. The additive nature of the line counts could be confusing,
