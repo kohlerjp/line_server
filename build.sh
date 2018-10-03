@@ -22,7 +22,6 @@ asdf global erlang 21.1
 asdf plugin-add elixir
 asdf install elixir 1.5.1
 asdf global elixir 1.5.1
-iex
 
 
 # Alternative build bath for Homebrew
